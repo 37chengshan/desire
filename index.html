@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desire · 韩国被封锁网站分类查询</title>
+<meta name="description" content="wpzzz/blocked-sites-in-south-korea · 2805 个域名的批量分类查询站">
+<style>
+:root{
+  --bg:#f6f3ec; --surface:#fffdf8; --surface-2:#efe9db; --text:#26221b; --muted:#7d7466;
+  --border:#e4dccb; --accent:#c05c2e; --accent-2:#d98a3d; --accent-soft:#f7e4d2; --on-accent:#fffdf8;
+  --high:#1a7f37; --medium:#9a6700; --low:#7d7466;
+  --serif:"Songti SC","Noto Serif SC",Georgia,"Times New Roman",serif;
+  --shadow:0 1px 2px rgba(38,34,27,.05),0 12px 32px rgba(38,34,27,.08);
+  --glow1:rgba(224,122,58,.55); --glow2:rgba(217,138,61,.4); --glow3:rgba(196,120,90,.35);
+}
+html[data-theme="dark"]{
+  --bg:#14110c; --surface:#1e1a13; --surface-2:#282219; --text:#ede4d3; --muted:#a3967f;
+  --border:#38301f; --accent:#e8843c; --accent-2:#f0a95c; --accent-soft:#332414; --on-accent:#14110c;
+  --high:#3fb950; --medium:#d29922; --low:#a3967f;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4);
+  --glow1:rgba(232,132,60,.35); --glow2:rgba(240,169,92,.22); --glow3:rgba(200,110,70,.2);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  line-height:1.65;overflow-x:hidden}
+/* ---------- ambient canvas + grain ---------- */
+#ambient{position:fixed;inset:0;z-index:-2;pointer-events:none}
+.grain{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")}
+html[data-theme="dark"] .grain{mix-blend-mode:screen;opacity:.07}
+/* ---------- progress ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:0 3px 3px 0}
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:40;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid var(--border)}
+nav .inner{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.brand{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:.5px}
+.brand em{font-style:normal;color:var(--accent)}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:99px;padding:2px 10px}
+.spacer{flex:1}
+#themeBtn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:99px;
+  padding:7px 16px;cursor:pointer;font-size:13px;transition:transform .2s}
+#themeBtn:hover{transform:translateY(-1px)}
+/* ---------- hero ---------- */
+.hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;position:relative;
+  max-width:1120px;margin:0 auto;padding:120px 20px 40px}
+.kicker{font-size:13px;letter-spacing:3px;color:var(--accent);font-weight:600;margin-bottom:18px}
+.hero h1{font-family:var(--serif);font-size:clamp(40px,7vw,76px);line-height:1.25;margin:0 0 20px;font-weight:700;
+  letter-spacing:1px}
+.hero h1 .hl{color:var(--accent);position:relative;display:inline-block}
+.hero p.lead{font-size:17px;color:var(--muted);max-width:640px;margin:0 0 34px}
+.hero .search{max-width:640px;display:flex;gap:10px}
+.hero .search input{flex:1;padding:15px 20px;font-size:16px;border:1px solid var(--border);border-radius:16px;
+  background:var(--surface);color:var(--text);box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s}
+.hero .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
+.scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:12px;
+  letter-spacing:2px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.7}50%{transform:translate(-50%,10px);opacity:1}}
+/* ---------- sections ---------- */
+section{max-width:1120px;margin:0 auto;padding:70px 20px}
+.sec-title{font-family:var(--serif);font-size:clamp(26px,4vw,38px);margin:0 0 8px;font-weight:700}
+.sec-sub{color:var(--muted);font-size:15px;margin:0 0 30px;max-width:680px}
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.1,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px 20px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s}
+.stat:hover{transform:translateY(-4px)}
+.stat::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(var(--accent),var(--accent-2));opacity:.85}
+.stat .n{font-family:var(--serif);font-size:34px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat .l{font-size:13px;color:var(--muted);margin-top:4px}
+/* ---------- distribution ---------- */
+.dist{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+.drow{display:grid;grid-template-columns:150px 1fr 64px;gap:14px;align-items:center;margin:12px 0;font-size:13px}
+.drow .name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drow .track{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.drow .fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+.drow .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+/* ---------- query ---------- */
+.querybox{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;
+  box-shadow:var(--shadow);position:sticky;top:64px;z-index:20}
+.qrow{display:flex;gap:10px;flex-wrap:wrap}
+.qrow input{flex:1;min-width:220px;padding:13px 18px;border:1px solid var(--border);border-radius:14px;
+  font-size:15px;background:var(--bg);color:var(--text)}
+.qrow input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;max-height:118px;overflow-y:auto;padding-right:4px}
+.chip{border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:99px;
+  padding:6px 13px;font-size:13px;cursor:pointer;user-select:none;transition:all .18s;white-space:nowrap}
+.chip small{color:var(--muted);margin-left:5px;font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip.on small{color:var(--on-accent);opacity:.85}
+.confrow{display:flex;gap:8px;margin-top:12px;align-items:center;font-size:13px;color:var(--muted);flex-wrap:wrap}
+/* ---------- table ---------- */
+.meta{font-size:13px;color:var(--muted);margin:18px 4px 10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);
+  border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);font-size:14px}
+thead th{text-align:left;padding:12px 16px;font-size:12px;letter-spacing:1px;color:var(--muted);
+  border-bottom:1px solid var(--border);background:var(--surface-2);white-space:nowrap}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.row{cursor:pointer;transition:background .15s}
+tbody tr.row:hover{background:var(--surface-2)}
+.domain{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;word-break:break-all}
+.cat{display:inline-block;padding:3px 12px;border-radius:99px;font-size:12px;background:var(--accent-soft);
+  color:var(--accent);white-space:nowrap;font-weight:600}
+.cf{font-size:12px;font-weight:700;white-space:nowrap}
+.cf.high{color:var(--high)}.cf.medium{color:var(--medium)}.cf.low{color:var(--low)}
+tr.detail td{background:var(--surface-2);font-size:13px}
+tr.detail .k{color:var(--muted);font-size:12px}
+.pager{display:flex;gap:12px;align-items:center;justify-content:center;margin:22px 0;font-size:14px}
+.pager button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:12px;
+  padding:9px 20px;cursor:pointer;transition:all .18s}
+.pager button:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.pager button:disabled{opacity:.35;cursor:default}
+/* ---------- method ---------- */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+.step .no{font-family:var(--serif);font-size:28px;color:var(--accent);font-weight:700}
+.step h3{margin:8px 0;font-size:16px}
+.step p{font-size:13px;color:var(--muted);margin:0}
+.warn{background:var(--accent-soft);border:1px solid var(--accent);border-radius:14px;padding:14px 18px;
+  font-size:13px;margin-top:22px}
+.warn b{color:var(--accent)}
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--border);margin-top:40px}
+footer .inner{max-width:1120px;margin:0 auto;padding:28px 20px 44px;font-size:12px;color:var(--muted);
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--accent);text-decoration:none}
+@media(max-width:640px){
+  .drow{grid-template-columns:110px 1fr 52px}
+  thead{display:none}tbody td{display:block;border-bottom:none;padding:7px 16px}
+  tbody tr{border-bottom:1px solid var(--border);display:block;padding:8px 0}
+  .hero{min-height:88vh}
+  .querybox{top:58px;padding:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .scrollhint{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<canvas id="ambient"></canvas>
+<div class="grain"></div>
+<div id="progress"></div>
+
+<nav><div class="inner">
+  <div class="brand">Desire<em>.</em></div>
+  <div class="tag">KR Blocked Sites · 2805 域名</div>
+  <div class="spacer"></div>
+  <button id="themeBtn">🌙 深色</button>
+</div></nav>
+
+<header class="hero" id="hero">
+  <div class="kicker reveal">SOUTH KOREA · BLOCKED SITES ARCHIVE</div>
+  <h1 class="reveal d1">韩国被封锁网站<br><span class="hl">分类查询</span>站</h1>
+  <p class="lead reveal d2">基于 wpzzz/blocked-sites-in-south-korea 仓库的 2805 个域名，经过四轮批量分类：域名启发式初筛、首页标题抓取验证、urlscan 历史扫描补全、搜索引擎疑难核验。</p>
+  <div class="search reveal d3">
+    <input id="qHero" type="search" placeholder="输入域名试试，如：pornhub、kcna、89.com…" autocomplete="off">
+  </div>
+  <div class="scrollhint">向下滚动 ↓</div>
+</header>
+
+<section id="sec-stats">
+  <h2 class="sec-title reveal">一眼看清全局</h2>
+  <p class="sec-sub reveal">2805 个被封锁域名中，超过 96% 与成人内容相关，另有赌博、盗版、间谍软件与朝鲜官媒等零星混入。</p>
+  <div class="stats" id="stats"></div>
+</section>
+
+<section id="sec-dist">
+  <h2 class="sec-title reveal">分类分布</h2>
+  <p class="sec-sub reveal">按数量排序的前 10 个分类。</p>
+  <div class="dist reveal" id="dist"></div>
+</section>
+
+<section id="sec-query">
+  <h2 class="sec-title reveal">查一个域名</h2>
+  <p class="sec-sub reveal">支持模糊搜索、分类与置信度组合筛选，点击行查看判定依据。</p>
+  <div class="querybox reveal">
+    <div class="qrow"><input id="q" type="search" placeholder="搜索域名…" autocomplete="off"></div>
+    <div class="chips" id="catchips"></div>
+    <div class="confrow"><span>置信度</span>
+      <span class="chip" data-cf="high">高</span><span class="chip" data-cf="medium">中</span><span class="chip" data-cf="low">低</span>
+    </div>
+  </div>
+  <div class="meta"><span id="count"></span><span id="pageinfo"></span></div>
+  <table><thead><tr><th>域名</th><th>分类</th><th>置信度</th><th>判定方法</th></tr></thead><tbody id="tbody"></tbody></table>
+  <div class="pager"><button id="prev">← 上一页</button><button id="next">下一页 →</button></div>
+</section>
+
+<section id="sec-method">
+  <h2 class="sec-title reveal">分类方法</h2>
+  <p class="sec-sub reveal">四轮流水线，每一轮都在修正上一轮的误判。</p>
+  <div class="steps">
+    <div class="step reveal"><div class="no">01</div><h3>域名启发式</h3><p>多语言关键词库 + 知名品牌名单，四轮迭代补回 hustler、dancingbear 等漏网品牌词。</p></div>
+    <div class="step reveal d1"><div class="no">02</div><h3>首页标题抓取</h3><p>2120 个目标拿到 1634 个 HTTP 200、1546 个页面标题，约 90 条标题证据直接修正分类。</p></div>
+    <div class="step reveal d2"><div class="no">03</div><h3>urlscan 补全</h3><p>对 202 个抓取失败的域名用 urlscan.io 历史扫描记录补全，实锤多个被劫持挪用的域名。</p></div>
+    <div class="step reveal d3"><div class="no">04</div><h3>疑难核验</h3><p>搜索引擎逐个核验疑难域名，如 89.com 实为 1996 年起的老牌成人链接目录。</p></div>
+  </div>
+  <div class="warn reveal">⚠️ <b>6 个域名疑似涉未成年人内容</b>（如 babypink.to、lolataboo.com），仅凭域名标记为「高风险-疑似涉未成年人」，未做任何抓取，需人工核查。本站为研究用途的分类索引，不收录任何实际内容。</div>
+</section>
+
+<footer><div class="inner">
+  <span>数据来源 <a href="https://github.com/wpzzz/blocked-sites-in-south-korea" target="_blank" rel="noopener">wpzzz/blocked-sites-in-south-korea</a> · 生成于 2026-09-30</span>
+  <span>Desire · built with Muse</span>
+</div></footer>
+
+<script>
+/* ============ ambient canvas: damped mouse glow ============ */
+(function(){
+  const cv=document.getElementById('ambient'),ctx=cv.getContext('2d');
+  let W,H,DPR=Math.min(devicePixelRatio||1,2);
+  function size(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;
+    cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);}
+  size();addEventListener('resize',size);
+  const reduced=matchMedia('(prefers-color-scheme: reduce)').matches||matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const blobs=[
+    {x:.2,y:.25,r:.42,c:()=>getComputedStyle(document.documentElement).getPropertyValue('--glow1'),mx:0,my:0,px:0,py:0,ox:.18,oy:.22,sp:.00021,ph:0},
+    {x:.8,y:.6,r:.5,c:()=>getComputedStyle(document.documentElement).getPropertyValue('--glow2'),mx:0,my:0,px:0,py:0,ox:.8,oy:.62,sp:.00016,ph:2},
+    {x:.55,y:.9,r:.38,c:()=>getComputedStyle(document.documentElement).getPropertyValue('--glow3'),mx:0,my:0,px:0,py:0,ox:.5,oy:.88,sp:.00019,ph:4}
+  ];
+  let tx=.5,ty=.4,gx=.5,gy=.4;
+  addEventListener('pointermove',e=>{tx=e.clientX/W;ty=e.clientY/H;},{passive:true});
+  addEventListener('pointerleave',()=>{tx=.5;ty=.4;});
+  // touch: gentle drift toward touch point
+  addEventListener('touchmove',e=>{const t=e.touches[0];if(t){tx=t.clientX/W;ty=t.clientY/H;}},{passive:true});
+  let t0=performance.now();
+  function frame(now){
+    const t=(now-t0)/1000;
+    // global damped follow (spring)
+    gx+=(tx-gx)*0.045; gy+=(ty-gy)*0.045;
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation='lighter';
+    const dark=document.documentElement.dataset.theme==='dark';
+    blobs.forEach((b,i)=>{
+      // each blob: damped toward (global glow pos blended with its own drift orbit)
+      const ox=b.ox+Math.sin(t*b.sp*1000+b.ph)*0.08;
+      const oy=b.oy+Math.cos(t*b.sp*800+b.ph)*0.08;
+      const bx=gx*0.35+ox*0.65, by=gy*0.35+oy*0.65;
+      b.px+=(bx-b.px)*0.03; b.py+=(by-b.py)*0.03; // extra damping layer
+      const r=Math.max(W,H)*b.r;
+      const g=ctx.createRadialGradient(b.px*W,b.py*H,0,b.px*W,b.py*H,r);
+      const col=b.c().trim()||'rgba(224,122,58,.4)';
+      g.addColorStop(0,col); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;
+      ctx.fillRect(0,0,W,H);
+    });
+    ctx.globalCompositeOperation='source-over';
+    if(!reduced)requestAnimationFrame(frame);
+  }
+  // init positions
+  blobs.forEach(b=>{b.px=b.ox;b.py=b.oy;});
+  if(reduced){ // static single paint
+    ctx.clearRect(0,0,W,H);
+    blobs.forEach(b=>{const r=Math.max(W,H)*b.r;
+      const g=ctx.createRadialGradient(b.ox*W,b.oy*H,0,b.ox*W,b.oy*H,r);
+      g.addColorStop(0,b.c().trim());g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);});
+  } else requestAnimationFrame(frame);
+})();
+/* ============ scroll progress + hero parallax ============ */
+(function(){
+  const bar=document.getElementById('progress'),hero=document.getElementById('hero');
+  let ticking=false;
+  addEventListener('scroll',()=>{
+    if(ticking)return;ticking=true;
+    requestAnimationFrame(()=>{
+      const h=document.documentElement;
+      const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+      bar.style.width=(p*100)+'%';
+      const y=Math.min(h.scrollTop,innerHeight);
+      hero.style.transform=`translateY(${y*0.18}px)`;
+      hero.style.opacity=1-Math.min(y/(innerHeight*0.85),0.85);
+      ticking=false;
+    });
+  },{passive:true});
+})();
+/* ============ reveal on scroll ============ */
+(function(){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+})();
+/* ============ data + query ============ */
+let DATA=[],cat='全部',cfs=new Set(),page=0;const PER=50;
+const CFC={high:'高',medium:'中',low:'低'};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+fetch('data.json').then(r=>r.json()).then(d=>{DATA=d;init();});
+function countUp(el,to){
+  const t0=performance.now(),dur=1200;
+  (function f(t){const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);
+    el.textContent=Math.round(to*e).toLocaleString();if(p<1)requestAnimationFrame(f);})(t0);
+}
+function init(){
+  const cats={};DATA.forEach(x=>cats[x.c]=(cats[x.c]||0)+1);
+  const order=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const stats=document.getElementById('stats');
+  const cards=[['域名总数',DATA.length],['分类数量',order.length],...order.slice(0,4)];
+  stats.innerHTML=cards.map(([l,v])=>`<div class="stat reveal"><div class="n" data-n="${v}">0</div><div class="l">${l}</div></div>`).join('');
+  document.querySelectorAll('#stats .reveal').forEach((el,i)=>{
+    new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){countUp(el.querySelector('.n'),+el.querySelector('.n').dataset.n);o.disconnect();}}),{threshold:.4}).observe(el);
+    const r=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');r.disconnect();}}),{threshold:.2});r.observe(el);
+  });
+  const dist=document.getElementById('dist');
+  dist.innerHTML=order.slice(0,10).map(([k,v])=>
+    `<div class="drow"><div class="name">${esc(k)}</div><div class="track"><div class="fill" data-w="${(v/DATA.length*100).toFixed(1)}"></div></div><div class="num">${v.toLocaleString()}</div></div>`).join('');
+  new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){
+    dist.querySelectorAll('.fill').forEach((f,i)=>setTimeout(()=>f.style.width=f.dataset.w+'%',i*90));o.disconnect();}}),{threshold:.25}).observe(dist);
+  const cc=document.getElementById('catchips');
+  cc.innerHTML=`<span class="chip on" data-c="全部">全部<small>${DATA.length}</small></span>`+
+    order.map(([k,v])=>`<span class="chip" data-c="${esc(k)}">${esc(k)}<small>${v}</small></span>`).join('');
+  cc.querySelectorAll('.chip').forEach(el=>el.onclick=()=>{cc.querySelectorAll('.chip').forEach(e=>e.classList.remove('on'));el.classList.add('on');cat=el.dataset.c;page=0;render();});
+  document.querySelectorAll('[data-cf]').forEach(el=>el.onclick=()=>{const v=el.dataset.cf;el.classList.toggle('on');el.classList.contains('on')?cfs.add(v):cfs.delete(v);page=0;render();});
+  const q=document.getElementById('q'),qh=document.getElementById('qHero');
+  q.oninput=()=>{page=0;render();};
+  qh.oninput=()=>{q.value=qh.value;page=0;render();};
+  qh.onkeydown=e=>{if(e.key==='Enter')document.getElementById('sec-query').scrollIntoView({behavior:'smooth'});};
+  document.getElementById('prev').onclick=()=>{if(page>0){page--;render();window.scrollTo({top:document.getElementById('sec-query').offsetTop-70,behavior:'smooth'});}};
+  document.getElementById('next').onclick=()=>{page++;render();window.scrollTo({top:document.getElementById('sec-query').offsetTop-70,behavior:'smooth'});};
+  render();
+}
+function filtered(){
+  const q=(document.getElementById('q').value||document.getElementById('qHero').value).trim().toLowerCase();
+  return DATA.filter(x=>(cat==='全部'||x.c===cat)&&(!cfs.size||cfs.has(x.cf))&&(!q||x.d.includes(q)));
+}
+function render(){
+  const f=filtered(),pages=Math.max(1,Math.ceil(f.length/PER));
+  if(page>=pages)page=pages-1;
+  const slice=f.slice(page*PER,page*PER+PER);
+  document.getElementById('count').textContent=`命中 ${f.length.toLocaleString()} 条`;
+  document.getElementById('pageinfo').textContent=`第 ${page+1} / ${pages} 页`;
+  document.getElementById('prev').disabled=page===0;
+  document.getElementById('next').disabled=page>=pages-1;
+  const tb=document.getElementById('tbody');
+  tb.innerHTML=slice.map((x,i)=>`<tr class="row" data-i="${page*PER+i}"><td class="domain">${esc(x.d)}</td><td><span class="cat">${esc(x.c)}</span></td><td><span class="cf ${x.cf}">${CFC[x.cf]}</span></td><td style="font-size:12px;color:var(--muted)">${esc(x.m)}</td></tr>`).join('')
+    ||`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:34px">没有匹配的结果，换个关键词试试</td></tr>`;
+  tb.querySelectorAll('tr.row').forEach(tr=>tr.onclick=()=>{
+    const x=f[+tr.dataset.i],nx=tr.nextElementSibling;
+    if(nx&&nx.classList.contains('detail')){nx.remove();return;}
+    tb.querySelectorAll('tr.detail').forEach(e=>e.remove());
+    const d=document.createElement('tr');d.className='detail';
+    d.innerHTML=`<td colspan="4"><span class="k">依据说明：</span>${esc(x.r)}<br><span class="k">判定方法：</span>${esc(x.m)}</td>`;
+    tr.after(d);
+  });
+}
+/* ============ theme ============ */
+(function(){
+  const btn=document.getElementById('themeBtn');
+  const set=t=>{document.documentElement.dataset.theme=t;btn.textContent=t==='dark'?'☀️ 浅色':'🌙 深色';try{localStorage.setItem('desire-theme',t)}catch(e){}};
+  btn.onclick=()=>set(document.documentElement.dataset.theme==='dark'?'light':'dark');
+  try{const s=localStorage.getItem('desire-theme');if(s)set(s);else if(matchMedia('(prefers-color-scheme: dark)').matches)set('dark');}catch(e){}
+})();
+</script>
+</body>
+</html>
