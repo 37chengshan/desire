@@ -174,6 +174,11 @@ h1{ font-weight:400; font-size:clamp(34px, 7.1vw, 104px); line-height:1.12;
 .fcard .cat{ font-size:11.5px; padding:3px 11px; border-radius:999px; background:var(--fg); color:var(--shade); }
 .fcard .src{ font-size:11px; color:var(--fg-faint); letter-spacing:.03em; }
 .fcard .desc{ font-size:13.5px; color:var(--fg-soft); line-height:1.6; margin:0; }
+a.fcard{ display:block; text-decoration:none; color:inherit; cursor:pointer; }
+.fcard .go{ float:right; opacity:.3; transition:opacity .25s; font-size:13px; }
+.fcard:hover .go{ opacity:1; }
+.visit{ display:inline-block; margin-bottom:10px; padding:6px 14px; border-radius:999px;
+  background:var(--fg); color:var(--shade); font-size:12.5px; text-decoration:none; }
 .console-box{ border:1px solid rgba(255,255,255,.7); border-radius:18px;
   background:linear-gradient(160deg, rgba(255,255,255,.66), rgba(255,255,255,.4));
   -webkit-backdrop-filter:blur(16px) saturate(160%); backdrop-filter:blur(16px) saturate(160%);
@@ -577,10 +582,10 @@ function renderFeatured(){
   for(i=0;i<FEATURED.length;i++){
     f=FEATURED[i];
     if(fCat!=="全部"&&f[1]!==fCat) continue;
-    html+='<div class="fcard"><div class="rank">NO.'+String(i+1).padStart(2,"0")+'</div>'+
+    html+='<a class="fcard" href="https://'+esc(f[0])+'" target="_blank" rel="noopener"><div class="rank">NO.'+String(i+1).padStart(2,"0")+'<span class="go">↗</span></div>'+
       '<div class="dom">'+esc(f[0])+'</div>'+
       '<div class="meta"><span class="cat">'+esc(f[1])+'</span><span class="src">'+(f[3]?"◉ 档案收录":"◇ 编辑精选")+'</span></div>'+
-      '<p class="desc">'+esc(f[2])+'</p></div>';
+      '<p class="desc">'+esc(f[2])+'</p></a>';
   }
   grid.innerHTML=html||'<p style="color:var(--fg-faint)">该分类暂无精选站点</p>';
 }
@@ -629,7 +634,7 @@ function renderConsole(){
       [].slice.call(tb.querySelectorAll("tr.detail")).forEach(function(e){ e.parentNode.removeChild(e); });
       var x=DB[+tr.getAttribute("data-i")],d=document.createElement("tr");
       d.className="detail";
-      d.innerHTML='<td colspan="4"><span class="k">依据说明 — </span>'+esc(x[4])+'<br><span class="k">判定方法 — </span>'+esc(x[3])+'</td>';
+      d.innerHTML='<td colspan="4"><a class="visit" href="https://'+esc(x[0])+'" target="_blank" rel="noopener">访问 '+esc(x[0])+' ↗</a><br><span class="k">依据说明 — </span>'+esc(x[4])+'<br><span class="k">判定方法 — </span>'+esc(x[3])+'</td>';
       tr.parentNode.insertBefore(d,tr.nextSibling);
     });
   });
