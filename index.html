@@ -179,6 +179,84 @@ a.fcard{ display:block; text-decoration:none; color:inherit; cursor:pointer; }
 .fcard:hover .go{ opacity:1; }
 .visit{ display:inline-block; margin-bottom:10px; padding:6px 14px; border-radius:999px;
   background:var(--fg); color:var(--shade); font-size:12.5px; text-decoration:none; }
+
+/* ---------- 18+ 年龄确认 ---------- */
+#agegate{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(10,8,6,.55);
+  -webkit-backdrop-filter:blur(22px) saturate(140%); backdrop-filter:blur(22px) saturate(140%);
+  transition:opacity .5s; }
+#agegate.hide{ opacity:0; pointer-events:none; }
+.agecard{ max-width:440px; width:100%; text-align:center; border-radius:22px; padding:38px 32px;
+  background:linear-gradient(160deg, rgba(255,255,255,.80), rgba(255,255,255,.52));
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 24px 70px rgba(13,12,11,.25); }
+.agecard .a18{ font-size:52px; }
+.agecard h2{ margin:14px 0 10px; font-size:24px; letter-spacing:.02em; }
+.agecard p{ font-size:14px; color:var(--fg-soft); line-height:1.8; margin:0 0 22px; }
+.agebtns{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.ageback{ font-size:13px; color:var(--fg-faint); margin-top:16px; min-height:20px; line-height:1.6; }
+
+/* ---------- 命运抽卡 ---------- */
+.gacha-banner{ border-radius:18px; padding:22px 24px; margin:0 0 18px; position:relative; overflow:hidden;
+  background:linear-gradient(140deg, rgba(255,214,120,.32), rgba(255,255,255,.50) 55%, rgba(178,132,255,.26));
+  border:1px solid rgba(255,255,255,.75);
+  -webkit-backdrop-filter:blur(16px) saturate(160%); backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 8px 24px rgba(13,12,11,.08); }
+.gacha-banner::after{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(105deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%);
+  transform:translateX(-120%); animation:gsheen 4.5s ease-in-out infinite; }
+@keyframes gsheen{ 0%,55%{ transform:translateX(-120%); } 90%,100%{ transform:translateX(120%); } }
+.g-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.g-title{ font-size:19px; font-weight:700; letter-spacing:.02em; }
+.g-odds{ font-family:var(--mono); font-size:11.5px; color:var(--fg-faint); }
+.g-sub{ font-size:13.5px; color:var(--fg-soft); margin:8px 0 14px; line-height:1.65; }
+.g-draw{ font-size:15px; height:46px; padding:0 36px; }
+#gachaOverlay{ position:fixed; inset:0; z-index:150; display:flex; align-items:center; justify-content:center;
+  background:rgba(8,6,5,.62); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  opacity:0; transition:opacity .3s; padding:20px; overflow:hidden; }
+#gachaOverlay[hidden]{ display:none; }
+#gachaOverlay.show{ opacity:1; }
+#gachaOverlay.shake .gcard-wrap{ animation:gshake .5s; }
+@keyframes gshake{ 0%,100%{transform:translate(0,0);} 20%{transform:translate(-10px,6px) rotate(-1.5deg);}
+  40%{transform:translate(9px,-7px) rotate(1.5deg);} 60%{transform:translate(-7px,-5px);} 80%{transform:translate(6px,5px);} }
+.gflash{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
+.gflash.go{ animation:gflash .7s ease-out; }
+@keyframes gflash{ 0%{opacity:0;} 15%{opacity:.85;} 100%{opacity:0;} }
+.gcard-wrap{ position:relative; z-index:2; text-align:center; perspective:1200px; max-height:100%; overflow-y:auto; }
+.gcard{ width:min(340px,84vw); height:460px; max-height:62vh; margin:0 auto; position:relative;
+  transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.7,.25,1.15); }
+.gcard.flipped{ transform:rotateY(180deg); }
+.gface{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px;
+  border:1px solid rgba(255,255,255,.75);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 24px 60px rgba(0,0,0,.35); }
+.gback{ background:linear-gradient(160deg, #2b2f6b, #101228 70%); color:#fff; }
+.gback-core{ font-family:var(--mono); font-size:15px; color:#9fb4ff; word-break:break-all; min-height:44px; }
+.gback-sub{ margin-top:12px; font-size:12px; letter-spacing:.35em; color:rgba(255,255,255,.45); }
+.gfront{ background:linear-gradient(160deg, rgba(255,255,255,.94), rgba(255,255,255,.74)); transform:rotateY(180deg); }
+.gcard.r5 .gfront{ background:linear-gradient(160deg, #fff7e0, #ffe9a8 60%, #f5cd58);
+  box-shadow:inset 0 1px 0 #fff, 0 0 60px rgba(245,180,40,.8), 0 24px 60px rgba(0,0,0,.35); }
+.gcard.r4 .gfront{ background:linear-gradient(160deg, #f1eaff, #d9c8ff 60%, #b795ff);
+  box-shadow:inset 0 1px 0 #fff, 0 0 44px rgba(139,92,246,.6), 0 24px 60px rgba(0,0,0,.35); }
+.gcard.r3 .gfront{ background:linear-gradient(160deg, #eaf3ff, #cfe4ff 60%, #a9ccff); }
+.grar{ font-size:15px; font-weight:700; letter-spacing:.1em; margin-bottom:12px; }
+.gdom{ font-family:var(--mono); font-size:22px; font-weight:700; word-break:break-all; margin-bottom:10px; color:#14120e; }
+.gmeta{ margin-bottom:12px; }
+.gdesc{ font-size:13px; color:#4a463c; line-height:1.65; margin:0; }
+.g-actions{ margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.g-ghost{ background:transparent; }
+.spark{ position:absolute; width:8px; height:8px; border-radius:50%; background:#ffd76a;
+  z-index:3; pointer-events:none; animation:gspark 1.3s ease-out forwards; }
+.spark.st{ clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);
+  border-radius:0; width:14px; height:14px; background:#fff3c4; }
+@keyframes gspark{ 0%{ transform:translate(0,0) scale(1); opacity:1; }
+  100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.toast{ position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(12px); z-index:300;
+  background:rgba(20,18,14,.88); color:#fff; font-size:13.5px; padding:11px 22px; border-radius:999px;
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap; }
+.toast[hidden]{ display:none; }
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 .console-box{ border:1px solid rgba(255,255,255,.7); border-radius:18px;
   background:linear-gradient(160deg, rgba(255,255,255,.66), rgba(255,255,255,.4));
   -webkit-backdrop-filter:blur(16px) saturate(160%); backdrop-filter:blur(16px) saturate(160%);
@@ -331,6 +409,11 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
   <div class="view-body">
     <h2 class="view-h">按流量与影响力，<br>挑出的 80 个站点。</h2>
     <p class="view-sub">深度调研后的 curated 名单：视频聚合、直播、JAV、工作室、VR、创作者平台全覆盖。标注「档案收录」的站点在本档案 2805 域名中有原始分类记录。</p>
+    <div class="gacha-banner">
+      <div class="g-top"><span class="g-title">🎰 命运抽卡</span><span class="g-odds">★★★★★ 5% · ★★★★ 25% · ★★★ 70%</span></div>
+      <p class="g-sub">选择困难？让运气替你决定今晚去哪。传说卡全是流量巨兽，抽中就是欧皇——战绩可以一键复制分享。</p>
+      <button class="pill g-draw" id="drawBtn">抽一张！</button>
+    </div>
     <div class="fchips" id="fchips"></div>
     <div class="fgrid" id="fgrid"></div>
   </div>
@@ -354,6 +437,38 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
     <div class="cmeta"><span id="count"></span><span id="pageinfo"></span></div>
     <table class="ctable"><thead><tr><th>域名</th><th>分类</th><th>置信度</th><th>判定方法</th></tr></thead><tbody id="tbody"></tbody></table>
     <div class="pager"><button id="prev">← 上一页</button><span id="pg"></span><button id="next">下一页 →</button></div>
+  </div>
+</div>
+
+<!-- 命运抽卡 -->
+<div id="gachaOverlay" hidden>
+  <div class="gflash" id="gFlash"></div>
+  <div class="gcard-wrap">
+    <div class="gcard" id="gCard">
+      <div class="gface gback"><div class="gback-core">Desire</div><div class="gback-sub">命运抽卡</div></div>
+      <div class="gface gfront" id="gFront"></div>
+    </div>
+    <div class="g-actions" id="gActions" hidden>
+      <a class="pill" id="gVisit" href="#" target="_blank" rel="noopener">访问 ↗</a>
+      <button class="pill" id="gAgain">再抽一次</button>
+      <button class="pill" id="gCopy">复制战绩</button>
+      <button class="pill g-ghost" id="gClose">关闭</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<!-- 18+ 年龄确认 -->
+<div id="agegate">
+  <div class="agecard">
+    <div class="a18">🔞</div>
+    <h2>深水区准入检查</h2>
+    <p>这里收录的网站只适合成年人。<br>如果你还没满 18 岁，现在掉头还来得及——<br>我们五年后再见，不见不散。</p>
+    <div class="agebtns">
+      <button class="pill" id="ageYes">我已满 18 岁，带我进去</button>
+      <button class="pill" id="ageNo">我还小，先撤退</button>
+    </div>
+    <div class="ageback" id="ageBack"></div>
   </div>
 </div>
 
@@ -661,9 +776,114 @@ function initConsole(){
   renderConsole();
 }
 
+/* ---------- 命运抽卡 ---------- */
+var STAR5=["pornhub.com","xvideos.com","xnxx.com","xhamster.com","stripchat.com","eporner.com","chaturbate.com","onlyfans.com","missav.ws","spankbang.com","tnaflix.com"];
+var STAR4=["youporn.com","livejasmin.com","e-hentai.org","hanime.tv","supjav.com","pornpics.com","nutaku.net","youjizz.com","redtube.com","beeg.com","nhentai.net","bongacams.com","fansly.com","gelbooru.com","literotica.com","cam4.com","manyvids.com","clips4sale.com","camsoda.com","porntrex.com","imagefap.com","tube8.com","myfreecams.com","brazzers.com","javlibrary.com","adultfriendfinder.com","4tube.com"];
+function starsOf(d){ if(STAR5.indexOf(d)>=0) return 5; if(STAR4.indexOf(d)>=0) return 4; return 3; }
+var RNAMES={5:"传说",4:"史诗",3:"稀有"};
+var RCOLORS={5:"#b57e12",4:"#7c3aed",3:"#2563eb"};
+function rollRarity(){ var r=Math.random(); if(r<0.05) return 5; if(r<0.30) return 4; return 3; }
+function toast(msg){
+  var el=document.getElementById("toast");
+  el.textContent=msg; el.hidden=false;
+  requestAnimationFrame(function(){ el.classList.add("show"); });
+  clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove("show"); el.hidden=true; },2200);
+}
+function burst(){
+  var ov=document.getElementById("gachaOverlay");
+  for(var i=0;i<36;i++){
+    var s=document.createElement("div"); s.className="spark"+(Math.random()<0.35?" st":"");
+    var ang=Math.random()*Math.PI*2, dist=120+Math.random()*230;
+    s.style.setProperty("--dx",Math.cos(ang)*dist+"px");
+    s.style.setProperty("--dy",Math.sin(ang)*dist+"px");
+    s.style.left="50%"; s.style.top="42%";
+    ov.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); },1400); })(s);
+  }
+}
+var gachaBusy=false;
+function openGacha(){
+  var ov=document.getElementById("gachaOverlay");
+  ov.hidden=false;
+  requestAnimationFrame(function(){ ov.classList.add("show"); });
+  doDraw();
+}
+function closeGacha(){
+  var ov=document.getElementById("gachaOverlay");
+  ov.classList.remove("show");
+  setTimeout(function(){ ov.hidden=true; },300);
+}
+function doDraw(){
+  if(gachaBusy) return; gachaBusy=true;
+  var ov=document.getElementById("gachaOverlay"),
+      card=document.getElementById("gCard"),
+      front=document.getElementById("gFront"),
+      backCore=document.querySelector(".gback-core");
+  card.classList.remove("flipped","r5","r4","r3");
+  ov.classList.remove("shake");
+  document.getElementById("gActions").hidden=true;
+  var ticks=0, timer=setInterval(function(){
+    backCore.textContent=FEATURED[Math.floor(Math.random()*FEATURED.length)][0];
+    if(++ticks>14){ clearInterval(timer); reveal(); }
+  },90);
+  function reveal(){
+    var rar=rollRarity(),
+        pool=FEATURED.filter(function(f){ return starsOf(f[0])===rar; }),
+        f=pool[Math.floor(Math.random()*pool.length)];
+    front.innerHTML='<div class="grar" style="color:'+RCOLORS[rar]+'">'+"★".repeat(rar)+" · "+RNAMES[rar]+'</div>'+
+      '<div class="gdom">'+esc(f[0])+'</div>'+
+      '<div class="gmeta"><span class="cat">'+esc(f[1])+'</span></div>'+
+      '<p class="gdesc">'+esc(f[2])+'</p>';
+    card.classList.add("flipped","r"+rar);
+    if(rar>=4){ var fl=document.getElementById("gFlash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+    if(rar===5){ ov.classList.add("shake"); burst(); }
+    document.getElementById("gVisit").href="https://"+f[0];
+    setTimeout(function(){
+      document.getElementById("gActions").hidden=false; gachaBusy=false;
+    }, rar===5?900:600);
+  }
+}
+function copyResult(){
+  var dom=document.getElementById("gFront").querySelector(".gdom"),
+      rar=document.getElementById("gFront").querySelector(".grar");
+  if(!dom||!rar) return;
+  var stars=(rar.textContent.match(/★/g)||[]).length,
+      t="我在 Desire 命运抽卡抽到了 "+"★".repeat(stars)+" "+dom.textContent+"！你也来试试手气 → https://37chengshan.github.io/desire/";
+  function done(){ toast("战绩已复制，去分享你的欧气吧 ✨"); }
+  function fallback(){
+    var ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("复制失败，手动复制吧"); } ta.remove();
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,fallback); }
+  else fallback();
+}
+
+/* ---------- 18+ 年龄确认 ---------- */
+(function(){
+  var g=document.getElementById("agegate");
+  if(!g) return;
+  try{
+    if(localStorage.getItem("desire_age")==="1"){ g.remove(); return; }
+  }catch(e){}
+  document.getElementById("ageYes").addEventListener("click",function(){
+    try{ localStorage.setItem("desire_age","1"); }catch(e){}
+    g.classList.add("hide"); setTimeout(function(){ g.remove(); },550);
+  });
+  document.getElementById("ageNo").addEventListener("click",function(){
+    document.getElementById("ageBack").textContent="🧊 明智的选择。已为你开启青少年模式（并没有）——五年后再见！";
+  });
+})();
+
 /* ---------- wiring, in this order ---------- */
 renderFeatured();
 initConsole();
+document.getElementById("drawBtn").addEventListener("click",openGacha);
+document.getElementById("gClose").addEventListener("click",closeGacha);
+document.getElementById("gAgain").addEventListener("click",doDraw);
+document.getElementById("gCopy").addEventListener("click",copyResult);
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&!document.getElementById("gachaOverlay").hidden) closeGacha();
+});
 window.addEventListener("scroll",readScroll,{passive:true});
 window.addEventListener("resize",readScroll);
 readScroll();
