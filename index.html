@@ -196,61 +196,97 @@ a.fcard{ display:block; text-decoration:none; color:inherit; cursor:pointer; }
 .agebtns{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 .ageback{ font-size:13px; color:var(--fg-faint); margin-top:16px; min-height:20px; line-height:1.6; }
 
-/* ---------- 命运抽卡 ---------- */
-.gacha-banner{ border-radius:18px; padding:22px 24px; margin:0 0 18px; position:relative; overflow:hidden;
-  background:linear-gradient(140deg, rgba(255,214,120,.32), rgba(255,255,255,.50) 55%, rgba(178,132,255,.26));
-  border:1px solid rgba(255,255,255,.75);
-  -webkit-backdrop-filter:blur(16px) saturate(160%); backdrop-filter:blur(16px) saturate(160%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 8px 24px rgba(13,12,11,.08); }
-.gacha-banner::after{ content:""; position:absolute; inset:0; pointer-events:none;
-  background:linear-gradient(105deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%);
-  transform:translateX(-120%); animation:gsheen 4.5s ease-in-out infinite; }
-@keyframes gsheen{ 0%,55%{ transform:translateX(-120%); } 90%,100%{ transform:translateX(120%); } }
-.g-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
-.g-title{ font-size:19px; font-weight:700; letter-spacing:.02em; }
-.g-odds{ font-family:var(--mono); font-size:11.5px; color:var(--fg-faint); }
-.g-sub{ font-size:13.5px; color:var(--fg-soft); margin:8px 0 14px; line-height:1.65; }
-.g-draw{ font-size:15px; height:46px; padding:0 36px; }
-#gachaOverlay{ position:fixed; inset:0; z-index:150; display:flex; align-items:center; justify-content:center;
-  background:rgba(8,6,5,.62); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  opacity:0; transition:opacity .3s; padding:20px; overflow:hidden; }
-#gachaOverlay[hidden]{ display:none; }
-#gachaOverlay.show{ opacity:1; }
-#gachaOverlay.shake .gcard-wrap{ animation:gshake .5s; }
-@keyframes gshake{ 0%,100%{transform:translate(0,0);} 20%{transform:translate(-10px,6px) rotate(-1.5deg);}
-  40%{transform:translate(9px,-7px) rotate(1.5deg);} 60%{transform:translate(-7px,-5px);} 80%{transform:translate(6px,5px);} }
-.gflash{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
-.gflash.go{ animation:gflash .7s ease-out; }
-@keyframes gflash{ 0%{opacity:0;} 15%{opacity:.85;} 100%{opacity:0;} }
-.gcard-wrap{ position:relative; z-index:2; text-align:center; perspective:1200px; max-height:100%; overflow-y:auto; }
-.gcard{ width:min(340px,84vw); height:460px; max-height:62vh; margin:0 auto; position:relative;
-  transform-style:preserve-3d; transition:transform .8s cubic-bezier(.2,.7,.25,1.15); }
-.gcard.flipped{ transform:rotateY(180deg); }
-.gface{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
-  border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px;
-  border:1px solid rgba(255,255,255,.75);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 24px 60px rgba(0,0,0,.35); }
-.gback{ background:linear-gradient(160deg, #2b2f6b, #101228 70%); color:#fff; }
-.gback-core{ font-family:var(--mono); font-size:15px; color:#9fb4ff; word-break:break-all; min-height:44px; }
-.gback-sub{ margin-top:12px; font-size:12px; letter-spacing:.35em; color:rgba(255,255,255,.45); }
-.gfront{ background:linear-gradient(160deg, rgba(255,255,255,.94), rgba(255,255,255,.74)); transform:rotateY(180deg); }
-.gcard.r5 .gfront{ background:linear-gradient(160deg, #fff7e0, #ffe9a8 60%, #f5cd58);
-  box-shadow:inset 0 1px 0 #fff, 0 0 60px rgba(245,180,40,.8), 0 24px 60px rgba(0,0,0,.35); }
-.gcard.r4 .gfront{ background:linear-gradient(160deg, #f1eaff, #d9c8ff 60%, #b795ff);
-  box-shadow:inset 0 1px 0 #fff, 0 0 44px rgba(139,92,246,.6), 0 24px 60px rgba(0,0,0,.35); }
-.gcard.r3 .gfront{ background:linear-gradient(160deg, #eaf3ff, #cfe4ff 60%, #a9ccff); }
-.grar{ font-size:15px; font-weight:700; letter-spacing:.1em; margin-bottom:12px; }
-.gdom{ font-family:var(--mono); font-size:22px; font-weight:700; word-break:break-all; margin-bottom:10px; color:#14120e; }
-.gmeta{ margin-bottom:12px; }
-.gdesc{ font-size:13px; color:#4a463c; line-height:1.65; margin:0; }
-.g-actions{ margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-.g-ghost{ background:transparent; }
-.spark{ position:absolute; width:8px; height:8px; border-radius:50%; background:#ffd76a;
-  z-index:3; pointer-events:none; animation:gspark 1.3s ease-out forwards; }
-.spark.st{ clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);
-  border-radius:0; width:14px; height:14px; background:#fff3c4; }
-@keyframes gspark{ 0%{ transform:translate(0,0) scale(1); opacity:1; }
+/* ---------- 命运抽卡舞台 ---------- */
+.stage{ display:flex; flex-direction:column; align-items:center; pointer-events:auto;
+  width:min(100%,560px); margin-top:clamp(8px,1.4vw,18px); position:relative; }
+.stage-glow{ position:absolute; top:2%; left:50%; transform:translateX(-50%);
+  width:min(420px,90vw); height:280px; pointer-events:none; filter:blur(50px); opacity:.5; z-index:1;
+  background:radial-gradient(ellipse at center, rgba(255,205,110,.45), rgba(139,92,246,.25) 55%, transparent 75%);
+  transition:background .6s; }
+.stage-glow.r5{ background:radial-gradient(ellipse at center, rgba(255,190,60,.8), rgba(255,140,40,.35) 55%, transparent 75%); opacity:.75; }
+.stage-glow.r4{ background:radial-gradient(ellipse at center, rgba(167,139,250,.7), rgba(124,58,237,.32) 55%, transparent 75%); opacity:.7; }
+.stage-glow.r3{ background:radial-gradient(ellipse at center, rgba(120,170,255,.55), rgba(59,130,246,.28) 55%, transparent 75%); }
+.amb{ position:absolute; width:5px; height:5px; border-radius:50%; background:rgba(255,220,150,.85);
+  filter:blur(1px); pointer-events:none; z-index:1; animation:amb 7s linear infinite; }
+@keyframes amb{ 0%{ transform:translateY(24px); opacity:0; } 15%{ opacity:.9; } 100%{ transform:translateY(-280px); opacity:0; } }
+.pcard{ width:min(240px,56vw); height:min(300px,36vh); min-height:250px; position:relative;
+  transform-style:preserve-3d; transition:transform .85s cubic-bezier(.2,.7,.25,1.12); z-index:2;
+  animation:pbob 5s ease-in-out infinite; cursor:pointer; }
+.pcard.flipped{ transform:rotateY(180deg); animation:none; }
+.pcard.shuffling{ animation:pshake .12s linear infinite; }
+@keyframes pbob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-9px); } }
+@keyframes pshake{ 0%{ transform:translateX(-2px) rotate(-.6deg); } 100%{ transform:translateX(2px) rotate(.6deg); } }
+.pface{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  border-radius:18px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:22px 18px; overflow:hidden; border:1px solid rgba(255,255,255,.65);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 22px 55px rgba(0,0,0,.32); }
+.pback{ background:radial-gradient(circle at 50% 30%, rgba(255,215,130,.17), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 2px, transparent 2px 10px),
+    linear-gradient(160deg, #333a7d, #141736 72%); color:#fff; }
+.pback-emblem{ font-size:38px; margin-bottom:8px; z-index:2;
+  background:linear-gradient(160deg,#ffe9a8,#c9932b); -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; }
+.pback-core{ font-family:var(--mono); font-size:12.5px; color:#a9bcff; word-break:break-all;
+  min-height:36px; text-align:center; z-index:2; }
+.pback-sub{ margin-top:8px; font-size:11px; letter-spacing:.4em; color:rgba(255,255,255,.5); z-index:2; }
+.pfront{ background:linear-gradient(165deg, rgba(255,255,255,.96), rgba(255,255,255,.78));
+  transform:rotateY(180deg); text-align:center; }
+.pcard.r5 .pfront{ background:linear-gradient(165deg, #fff8e1, #ffdf9e 55%, #f0bd45);
+  box-shadow:inset 0 1px 0 #fff, 0 0 55px rgba(245,175,35,.85), 0 22px 55px rgba(0,0,0,.32); }
+.pcard.r5{ animation:rgold 1.6s ease-in-out infinite; }
+@keyframes rgold{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,190,60,.55)); } 50%{ filter:drop-shadow(0 0 26px rgba(255,190,60,.95)); } }
+.pcard.r4 .pfront{ background:linear-gradient(165deg, #f2ebff, #d7c2ff 55%, #b088ff);
+  box-shadow:inset 0 1px 0 #fff, 0 0 40px rgba(139,92,246,.6), 0 22px 55px rgba(0,0,0,.32); }
+.pcard.r3 .pfront{ background:linear-gradient(165deg, #edf4ff, #cbdefc 55%, #a4c6fb); }
+.pfoil{ position:absolute; inset:0; border-radius:18px; pointer-events:none; z-index:5;
+  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.55) 46%, rgba(255,255,255,.12) 54%, transparent 70%);
+  background-size:280% 280%; mix-blend-mode:soft-light; animation:pfoil 3.8s ease-in-out infinite; }
+@keyframes pfoil{ 0%{ background-position:120% 0; } 50%{ background-position:-20% 0; } 100%{ background-position:120% 0; } }
+.prar{ font-size:14px; font-weight:700; letter-spacing:.12em; margin-bottom:8px; z-index:2; line-height:1.9; }
+.prar .st{ display:inline-block; animation:starpop .55s cubic-bezier(.2,1.6,.4,1) backwards; }
+.prar .rn{ font-size:11.5px; letter-spacing:.32em; font-weight:500; }
+@keyframes starpop{ 0%{ transform:scale(0) rotate(-40deg); opacity:0; } 100%{ transform:scale(1) rotate(0); opacity:1; } }
+.pdom{ font-family:var(--mono); font-size:19px; font-weight:700; word-break:break-all; color:#14120e; margin-bottom:8px; z-index:2; }
+.pmeta{ margin-bottom:8px; z-index:2; }
+.pdesc{ font-size:12px; color:#4a463c; line-height:1.6; margin:0; z-index:2; }
+.stage-btns{ margin-top:16px; z-index:2; }
+.stage-draw{ font-size:16px; height:50px; padding:0 44px;
+  background:linear-gradient(150deg, #ffe9a8, #f5c542 55%, #d99a1f); border-color:rgba(255,255,255,.85);
+  animation:drawpulse 2.2s ease-in-out infinite; }
+@keyframes drawpulse{ 0%,100%{ box-shadow:inset 0 1px 1px rgba(255,255,255,.9), 0 10px 28px rgba(217,154,31,.35); }
+  50%{ box-shadow:inset 0 1px 1px rgba(255,255,255,.9), 0 10px 42px rgba(217,154,31,.65); } }
+.stage-draw:disabled{ opacity:.55; animation:none; cursor:wait; }
+.stage-odds{ margin-top:10px; font-family:var(--mono); font-size:11px; color:var(--fg-faint); letter-spacing:.04em; z-index:2; }
+.stage-actions{ margin-top:12px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; z-index:2; }
+.stage-actions[hidden]{ display:none; }
+.stage-history{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:100%; z-index:2; min-height:4px; }
+.hpill{ font-family:var(--mono); font-size:11px; padding:5px 12px; border-radius:999px; white-space:nowrap;
+  background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.7); color:var(--fg-soft);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+.hpill b{ font-weight:700; margin-right:4px; }
+.h5 b{ color:#b57e12; } .h4 b{ color:#7c3aed; } .h3 b{ color:#2563eb; }
+.stage-flash{ position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:140; }
+.stage-flash.go{ animation:gflash .7s ease-out; }
+@keyframes gflash{ 0%{opacity:0;} 15%{opacity:.8;} 100%{opacity:0;} }
+.pspark{ position:absolute; width:7px; height:7px; border-radius:50%; background:#ffd76a;
+  pointer-events:none; z-index:4; animation:pspark 1.25s ease-out forwards; }
+@keyframes pspark{ 0%{ transform:translate(0,0) scale(1); opacity:1; }
   100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.hero-search.slim{ margin-top:14px; }
+.hero-search.slim input{ height:44px; font-size:13.5px; }
+/* ---------- 奖池星级 ---------- */
+.fcard .rank{ display:flex; justify-content:space-between; align-items:center; }
+.fcard .stars{ font-size:11px; letter-spacing:.1em; }
+.fcard .stars.s5{ color:#b57e12; } .fcard .stars.s4{ color:#7c3aed; } .fcard .stars.s3{ color:#2563eb; }
+.fcard .go{ opacity:.3; transition:opacity .25s; font-size:13px; }
+.fcard:hover .go{ opacity:1; }
+.fcard.r5{ box-shadow:inset 0 3px 0 #d99a1f, inset 0 1px 0 rgba(255,255,255,.9), 0 8px 24px rgba(13,12,11,.07); }
+.fcard.r4{ box-shadow:inset 0 3px 0 #8b5cf6, inset 0 1px 0 rgba(255,255,255,.9), 0 8px 24px rgba(13,12,11,.07); }
+.fcard.r3{ box-shadow:inset 0 3px 0 #3b82f6, inset 0 1px 0 rgba(255,255,255,.9), 0 8px 24px rgba(13,12,11,.07); }
+.fcard.r5:hover{ box-shadow:inset 0 3px 0 #d99a1f, 0 12px 32px rgba(217,154,31,.28); }
+.fcard.r4:hover{ box-shadow:inset 0 3px 0 #8b5cf6, 0 12px 32px rgba(139,92,246,.25); }
+.fcard.r3:hover{ box-shadow:inset 0 3px 0 #3b82f6, 0 12px 32px rgba(59,130,246,.22); }
+.rarchips{ margin-bottom:10px; }
 .toast{ position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(12px); z-index:300;
   background:rgba(20,18,14,.88); color:#fff; font-size:13.5px; padding:11px 22px; border-radius:999px;
   -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
@@ -363,7 +399,7 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
 <header class="chrome">
   <button class="mark" id="markHome"><span class="mark-star" aria-hidden="true">&#10037;</span>&nbsp;Desire</button>
   <nav class="nav">
-    <a id="navFeatured">精选 80</a>
+    <a id="navFeatured">奖池</a>
     <a id="navConsole">控制台</a>
     <a class="pill" id="navStart">开始查询</a>
   </nav>
@@ -371,17 +407,34 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
 
 <main class="panels">
   <section class="panel" data-panel>
-    <div class="eyebrow">Desire</div>
-    <h1>2805 个域名，<br>一次看清。</h1>
-    <p class="sub">基于 wpzzz/blocked-sites-in-south-korea 的批量分类工程：域名启发式、标题抓取、urlscan 补全、疑难核验，四轮流水线。</p>
-    <div class="hero-search">
-      <input id="qHero" type="search" placeholder="输入域名，如 missav.ws / 85st…" autocomplete="off" aria-label="搜索域名">
+    <div class="eyebrow">Desire · 命运抽卡</div>
+    <div class="stage">
+      <div class="stage-glow" id="stageGlow"></div>
+      <div class="amb" style="left:16%; bottom:8%; animation-delay:0s"></div>
+      <div class="amb" style="left:80%; bottom:5%; animation-delay:2.4s"></div>
+      <div class="amb" style="left:62%; bottom:12%; animation-delay:4.8s"></div>
+      <div class="pcard" id="stageCard" title="点击抽卡">
+        <div class="pface pback">
+          <div class="pback-emblem">✦</div>
+          <div class="pback-core" id="pbackCore">Desire</div>
+          <div class="pback-sub">命运抽卡</div>
+        </div>
+        <div class="pface pfront" id="pFront"></div>
+        <div class="pfoil"></div>
+      </div>
+      <div class="stage-btns"><button class="pill stage-draw" id="stageDraw">🎰 抽一张！</button></div>
+      <div class="stage-odds">★★★★★ 传说 5% · ★★★★ 史诗 25% · ★★★ 稀有 70%</div>
+      <div class="stage-actions" id="stageActions" hidden>
+        <a class="pill" id="stVisit" href="#" target="_blank" rel="noopener">访问 ↗</a>
+        <button class="pill" id="stAgain">再抽一次</button>
+        <button class="pill" id="stCopy">复制战绩</button>
+      </div>
+      <div class="stage-history" id="stageHistory"></div>
+      <div class="hero-search slim">
+        <input id="qHero" type="search" placeholder="或直接输入域名搜索，如 missav.ws" autocomplete="off" aria-label="搜索域名">
+      </div>
     </div>
-    <div class="cta">
-      <button class="pill" id="goConsole">进入控制台</button>
-      <button class="pill" data-go="featured">浏览精选</button>
-    </div>
-    <div class="hint">SCROLL — 滚动逐帧 scrub 背景视频</div>
+    <div class="hint">SCROLL — 滚动逐帧 scrub 背景视频 · 下滑查看数据与奖池</div>
   </section>
   <section class="panel" data-panel>
     <div class="eyebrow">数据纵览</div>
@@ -390,10 +443,10 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
     <div class="cta"><button class="pill" data-go="console">打开控制台</button></div>
   </section>
   <section class="panel" data-panel>
-    <div class="eyebrow">精选 80</div>
-    <h1>最值得看的<br>80 个站点。</h1>
-    <p class="sub">按流量与影响力深度挑选：视频、直播、JAV、工作室、VR、创作者平台与游戏 —— 含 missav.ws。</p>
-    <div class="cta"><button class="pill" data-go="featured">浏览精选</button></div>
+    <div class="eyebrow">奖池</div>
+    <h1>80 张卡，<br>全员就位。</h1>
+    <p class="sub">按真实访问量定级：★★★★★ 传说 11 张 · ★★★★ 史诗 27 张 · ★★★ 稀有 42 张。点击卡片直达站点。</p>
+    <div class="cta"><button class="pill" data-go="featured">查看奖池</button></div>
   </section>
 </main>
 
@@ -401,19 +454,15 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
 
 <div class="track"></div>
 
-<div class="view" id="viewFeatured" role="dialog" aria-label="精选 80">
+<div class="view" id="viewFeatured" role="dialog" aria-label="奖池">
   <div class="view-head">
     <button class="back" data-back>← 返回</button>
-    <div class="view-title">精选 80 <small>FEATURED</small></div>
+    <div class="view-title">奖池 <small>POOL · 80</small></div>
   </div>
   <div class="view-body">
-    <h2 class="view-h">按流量与影响力，<br>挑出的 80 个站点。</h2>
-    <p class="view-sub">深度调研后的 curated 名单：视频聚合、直播、JAV、工作室、VR、创作者平台全覆盖。标注「档案收录」的站点在本档案 2805 域名中有原始分类记录。</p>
-    <div class="gacha-banner">
-      <div class="g-top"><span class="g-title">🎰 命运抽卡</span><span class="g-odds">★★★★★ 5% · ★★★★ 25% · ★★★ 70%</span></div>
-      <p class="g-sub">选择困难？让运气替你决定今晚去哪。传说卡全是流量巨兽，抽中就是欧皇——战绩可以一键复制分享。</p>
-      <button class="pill g-draw" id="drawBtn">抽一张！</button>
-    </div>
+    <h2 class="view-h">80 张卡，<br>全员就位。</h2>
+    <p class="view-sub">按 SimilarWeb / semrush 真实访问量定级：传说卡为数亿级流量巨兽。先去首页抽一张试试手气，再来池子里按星级捞。</p>
+    <div class="fchips rarchips" id="rarchips"></div>
     <div class="fchips" id="fchips"></div>
     <div class="fgrid" id="fgrid"></div>
   </div>
@@ -440,22 +489,8 @@ tr.detail .k{ color:var(--fg-faint); font-size:11px; letter-spacing:.04em; }
   </div>
 </div>
 
-<!-- 命运抽卡 -->
-<div id="gachaOverlay" hidden>
-  <div class="gflash" id="gFlash"></div>
-  <div class="gcard-wrap">
-    <div class="gcard" id="gCard">
-      <div class="gface gback"><div class="gback-core">Desire</div><div class="gback-sub">命运抽卡</div></div>
-      <div class="gface gfront" id="gFront"></div>
-    </div>
-    <div class="g-actions" id="gActions" hidden>
-      <a class="pill" id="gVisit" href="#" target="_blank" rel="noopener">访问 ↗</a>
-      <button class="pill" id="gAgain">再抽一次</button>
-      <button class="pill" id="gCopy">复制战绩</button>
-      <button class="pill g-ghost" id="gClose">关闭</button>
-    </div>
-  </div>
-</div>
+<!-- 抽卡全屏闪光 -->
+<div class="stage-flash" id="stageFlash"></div>
 <div class="toast" id="toast" hidden></div>
 
 <!-- 18+ 年龄确认 -->
@@ -663,12 +698,12 @@ document.getElementById("navFeatured").addEventListener("click",function(){ show
 document.getElementById("navConsole").addEventListener("click",function(){ showView("console"); });
 document.getElementById("navStart").addEventListener("click",function(){ showView("console"); });
 document.getElementById("markHome").addEventListener("click",function(){ showView(null); });
-document.getElementById("goConsole").addEventListener("click",function(){
+function heroSearch(){
   document.getElementById("q").value=document.getElementById("qHero").value;
   cPage=0; renderConsole(); showView("console");
-});
+}
 document.getElementById("qHero").addEventListener("keydown",function(e){
-  if(e.key==="Enter") document.getElementById("goConsole").click();
+  if(e.key==="Enter") heroSearch();
 });
 [].slice.call(document.querySelectorAll("[data-go]")).forEach(function(el){
   el.addEventListener("click",function(){ showView(el.getAttribute("data-go")); });
@@ -678,8 +713,8 @@ document.getElementById("qHero").addEventListener("keydown",function(e){
 });
 document.addEventListener("keydown",function(e){ if(e.key==="Escape") showView(null); });
 
-/* ---------- 精选 80 ---------- */
-var fCat="全部";
+/* ---------- 奖池 ---------- */
+var fCat="全部",fRar=0;
 function featuredCats(){
   var s={},i;
   for(i=0;i<FEATURED.length;i++) s[FEATURED[i][1]]=(s[FEATURED[i][1]]||0)+1;
@@ -693,16 +728,25 @@ function renderFeatured(){
   [].slice.call(box.querySelectorAll(".fchip")).forEach(function(el){
     el.addEventListener("click",function(){ fCat=el.getAttribute("data-fc"); renderFeatured(); });
   });
+  var rc=document.getElementById("rarchips"),cnt={5:0,4:0,3:0};
+  for(i=0;i<FEATURED.length;i++) cnt[starsOf(FEATURED[i][0])]++;
+  rc.innerHTML='<button class="fchip'+(fRar===0?" on":"")+'" data-fr="0">全部 · '+FEATURED.length+'</button>'+
+    [5,4,3].map(function(r){ return '<button class="fchip'+(fRar===r?" on":"")+'" data-fr="'+r+'"><span class="stars s'+r+'">'+"★".repeat(r)+'</span> '+RNAMES[r]+' · '+cnt[r]+'</button>'; }).join("");
+  [].slice.call(rc.querySelectorAll(".fchip")).forEach(function(el){
+    el.addEventListener("click",function(){ fRar=+el.getAttribute("data-fr"); renderFeatured(); });
+  });
   var html="";
   for(i=0;i<FEATURED.length;i++){
     f=FEATURED[i];
     if(fCat!=="全部"&&f[1]!==fCat) continue;
-    html+='<a class="fcard" href="https://'+esc(f[0])+'" target="_blank" rel="noopener"><div class="rank">NO.'+String(i+1).padStart(2,"0")+'<span class="go">↗</span></div>'+
+    var st=starsOf(f[0]);
+    if(fRar&&st!==fRar) continue;
+    html+='<a class="fcard r'+st+'" href="https://'+esc(f[0])+'" target="_blank" rel="noopener"><div class="rank"><span>NO.'+String(i+1).padStart(2,"0")+'</span><span style="white-space:nowrap"><span class="stars s'+st+'">'+"★".repeat(st)+'</span> <span class=\"go\">↗</span></span></div>'+
       '<div class="dom">'+esc(f[0])+'</div>'+
       '<div class="meta"><span class="cat">'+esc(f[1])+'</span><span class="src">'+(f[3]?"◉ 档案收录":"◇ 编辑精选")+'</span></div>'+
       '<p class="desc">'+esc(f[2])+'</p></a>';
   }
-  grid.innerHTML=html||'<p style="color:var(--fg-faint)">该分类暂无精选站点</p>';
+  grid.innerHTML=html||'<p style="color:var(--fg-faint)">该筛选下暂无卡片</p>';
 }
 
 /* ---------- 控制台 ---------- */
@@ -776,7 +820,7 @@ function initConsole(){
   renderConsole();
 }
 
-/* ---------- 命运抽卡 ---------- */
+/* ---------- 命运抽卡舞台 ---------- */
 var STAR5=["pornhub.com","xvideos.com","xnxx.com","xhamster.com","stripchat.com","eporner.com","chaturbate.com","onlyfans.com","missav.ws","spankbang.com","tnaflix.com"];
 var STAR4=["youporn.com","livejasmin.com","e-hentai.org","hanime.tv","supjav.com","pornpics.com","nutaku.net","youjizz.com","redtube.com","beeg.com","nhentai.net","bongacams.com","fansly.com","gelbooru.com","literotica.com","cam4.com","manyvids.com","clips4sale.com","camsoda.com","porntrex.com","imagefap.com","tube8.com","myfreecams.com","brazzers.com","javlibrary.com","adultfriendfinder.com","4tube.com"];
 function starsOf(d){ if(STAR5.indexOf(d)>=0) return 5; if(STAR4.indexOf(d)>=0) return 4; return 3; }
@@ -789,65 +833,67 @@ function toast(msg){
   requestAnimationFrame(function(){ el.classList.add("show"); });
   clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove("show"); el.hidden=true; },2200);
 }
+var drawBusy=false, drawHist=[];
+try{ drawHist=JSON.parse(localStorage.getItem("desire_hist")||"[]"); }catch(e){ drawHist=[]; }
+function renderHist(){
+  var box=document.getElementById("stageHistory");
+  if(!box) return;
+  box.innerHTML=drawHist.map(function(h){
+    return '<span class="hpill h'+h.r+'"><b>'+"★".repeat(h.r)+'</b>'+esc(h.d)+'</span>';
+  }).join("");
+}
 function burst(){
-  var ov=document.getElementById("gachaOverlay");
-  for(var i=0;i<36;i++){
-    var s=document.createElement("div"); s.className="spark"+(Math.random()<0.35?" st":"");
-    var ang=Math.random()*Math.PI*2, dist=120+Math.random()*230;
+  var card=document.getElementById("stageCard");
+  for(var i=0;i<30;i++){
+    var s=document.createElement("div"); s.className="pspark";
+    var ang=Math.random()*Math.PI*2, dist=90+Math.random()*170;
     s.style.setProperty("--dx",Math.cos(ang)*dist+"px");
     s.style.setProperty("--dy",Math.sin(ang)*dist+"px");
-    s.style.left="50%"; s.style.top="42%";
-    ov.appendChild(s);
-    (function(el){ setTimeout(function(){ el.remove(); },1400); })(s);
+    s.style.left="50%"; s.style.top="45%";
+    card.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); },1350); })(s);
   }
 }
-var gachaBusy=false;
-function openGacha(){
-  var ov=document.getElementById("gachaOverlay");
-  ov.hidden=false;
-  requestAnimationFrame(function(){ ov.classList.add("show"); });
-  doDraw();
-}
-function closeGacha(){
-  var ov=document.getElementById("gachaOverlay");
-  ov.classList.remove("show");
-  setTimeout(function(){ ov.hidden=true; },300);
-}
-function doDraw(){
-  if(gachaBusy) return; gachaBusy=true;
-  var ov=document.getElementById("gachaOverlay"),
-      card=document.getElementById("gCard"),
-      front=document.getElementById("gFront"),
-      backCore=document.querySelector(".gback-core");
-  card.classList.remove("flipped","r5","r4","r3");
-  ov.classList.remove("shake");
-  document.getElementById("gActions").hidden=true;
+function stageDraw(){
+  if(drawBusy) return; drawBusy=true;
+  var card=document.getElementById("stageCard"), front=document.getElementById("pFront"),
+      core=document.getElementById("pbackCore"), glow=document.getElementById("stageGlow"),
+      btn=document.getElementById("stageDraw");
+  card.classList.remove("flipped","r5","r4","r3"); glow.className="stage-glow";
+  document.getElementById("stageActions").hidden=true; btn.disabled=true;
+  card.classList.add("shuffling");
   var ticks=0, timer=setInterval(function(){
-    backCore.textContent=FEATURED[Math.floor(Math.random()*FEATURED.length)][0];
-    if(++ticks>14){ clearInterval(timer); reveal(); }
+    core.textContent=FEATURED[Math.floor(Math.random()*FEATURED.length)][0];
+    if(++ticks>14){ clearInterval(timer); card.classList.remove("shuffling"); reveal(); }
   },90);
   function reveal(){
     var rar=rollRarity(),
         pool=FEATURED.filter(function(f){ return starsOf(f[0])===rar; }),
-        f=pool[Math.floor(Math.random()*pool.length)];
-    front.innerHTML='<div class="grar" style="color:'+RCOLORS[rar]+'">'+"★".repeat(rar)+" · "+RNAMES[rar]+'</div>'+
-      '<div class="gdom">'+esc(f[0])+'</div>'+
-      '<div class="gmeta"><span class="cat">'+esc(f[1])+'</span></div>'+
-      '<p class="gdesc">'+esc(f[2])+'</p>';
-    card.classList.add("flipped","r"+rar);
-    if(rar>=4){ var fl=document.getElementById("gFlash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
-    if(rar===5){ ov.classList.add("shake"); burst(); }
-    document.getElementById("gVisit").href="https://"+f[0];
+        f=pool[Math.floor(Math.random()*pool.length)], s, starsHtml="";
+    for(s=0;s<rar;s++) starsHtml+='<span class="st" style="animation-delay:'+(0.2+s*0.13).toFixed(2)+'s">★</span>';
+    front.innerHTML='<div class="prar" style="color:'+RCOLORS[rar]+'">'+starsHtml+'<br><span class="rn">'+RNAMES[rar]+'</span></div>'+
+      '<div class="pdom">'+esc(f[0])+'</div>'+
+      '<div class="pmeta"><span class="cat">'+esc(f[1])+'</span></div>'+
+      '<p class="pdesc">'+esc(f[2])+'</p>';
+    card.classList.add("flipped","r"+rar); glow.classList.add("r"+rar);
+    core.textContent="Desire";
+    if(rar>=4){ var fl=document.getElementById("stageFlash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+    if(rar===5) burst();
+    document.getElementById("stVisit").href="https://"+f[0];
+    drawHist.unshift({d:f[0],r:rar}); drawHist=drawHist.slice(0,8);
+    try{ localStorage.setItem("desire_hist",JSON.stringify(drawHist)); }catch(e){}
+    renderHist();
     setTimeout(function(){
-      document.getElementById("gActions").hidden=false; gachaBusy=false;
-    }, rar===5?900:600);
+      document.getElementById("stageActions").hidden=false; btn.disabled=false; drawBusy=false;
+    }, rar===5?1000:650);
   }
 }
 function copyResult(){
-  var dom=document.getElementById("gFront").querySelector(".gdom"),
-      rar=document.getElementById("gFront").querySelector(".grar");
-  if(!dom||!rar) return;
-  var stars=(rar.textContent.match(/★/g)||[]).length,
+  var card=document.getElementById("stageCard");
+  if(!card.classList.contains("flipped")){ toast("先抽一张再复制战绩吧"); return; }
+  var dom=document.querySelector("#pFront .pdom"), rarEl=document.querySelector("#pFront .prar");
+  if(!dom||!rarEl) return;
+  var stars=(rarEl.textContent.match(/★/g)||[]).length,
       t="我在 Desire 命运抽卡抽到了 "+"★".repeat(stars)+" "+dom.textContent+"！你也来试试手气 → https://37chengshan.github.io/desire/";
   function done(){ toast("战绩已复制，去分享你的欧气吧 ✨"); }
   function fallback(){
@@ -877,13 +923,11 @@ function copyResult(){
 /* ---------- wiring, in this order ---------- */
 renderFeatured();
 initConsole();
-document.getElementById("drawBtn").addEventListener("click",openGacha);
-document.getElementById("gClose").addEventListener("click",closeGacha);
-document.getElementById("gAgain").addEventListener("click",doDraw);
-document.getElementById("gCopy").addEventListener("click",copyResult);
-document.addEventListener("keydown",function(e){
-  if(e.key==="Escape"&&!document.getElementById("gachaOverlay").hidden) closeGacha();
-});
+document.getElementById("stageDraw").addEventListener("click",stageDraw);
+document.getElementById("stageCard").addEventListener("click",stageDraw);
+document.getElementById("stAgain").addEventListener("click",stageDraw);
+document.getElementById("stCopy").addEventListener("click",copyResult);
+renderHist();
 window.addEventListener("scroll",readScroll,{passive:true});
 window.addEventListener("resize",readScroll);
 readScroll();
